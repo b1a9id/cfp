@@ -15,7 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -26,7 +25,9 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.nonNull;
 import static jjug.submission.enums.SubmissionStatus.*;
+import static org.springframework.util.StringUtils.hasLength;
 
 @Controller
 @RequiredArgsConstructor
@@ -228,7 +229,7 @@ public class SubmissionController {
 							BeanUtils.copyProperties(speakerForm, speaker);
 
 							List<Activity> activityList = speakerForm.getActivityList().stream()
-									.filter(activityForm -> Objects.nonNull(activityForm.getUrl()) && StringUtils.hasLength(activityForm.getUrl()))
+									.filter(activityForm -> nonNull(activityForm.getUrl()) && hasLength(activityForm.getUrl()))
 									.map(activityForm -> {
 										Activity activity = new Activity();
 										BeanUtils.copyProperties(activityForm, activity);

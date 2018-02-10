@@ -101,35 +101,35 @@
                 <tr>
                     <th style="width: 30%"><label th:for="name" th:text="#{name}">名前</label></th>
                     <td style="width: 70%"><input type="text" th:field="*{speakerForms[__${stat.index}__].name}"
-                            th:placeholder="${stat.index} eq 0 ? (Required)"
+                            placeholder="(Required)"
                             th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].name') ? 'error' : ''}"/></td>
                 </tr>
                 <tr>
                     <th style="width: 30%"><label th:for="github" th:text="#{github}">名前</label></th>
                     <td style="width: 70%"><input type="text" th:field="*{speakerForms[__${stat.index}__].github}"
-                            th:placeholder="${stat.index} eq 0 ? (Required)"
+                            placeholder="(Required)"
                             th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].github') ? 'error' : ''}"/></td>
                 </tr>
                 <tr>
                     <th><label th:for="companyOrCommunity" th:text="#{companyOrCommunity}">aaa</label></th>
                     <td><input type="text" th:field="*{speakerForms[__${stat.index}__].companyOrCommunity}"
-                            th:placeholder="${stat.index} eq 0 ? '(Required)'"
+                            placeholder="(Required)"
                             th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].companyOrCommunity') ? 'error' : ''}"/></td>
                 </tr>
                 <tr>
                     <th><label th:for="bio" th:text="#{bio}">aaa</label></th>
                     <td><textarea th:field="*{speakerForms[__${stat.index}__].bio}"
-                            th:placeholder="${stat.index} eq 0 ? 'Markdown is available. (Required)'"
+                            placeholder="Markdown is available. (Required)"
                             th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].bio') ? 'error' : ''}"></textarea></td>
                 </tr>
                 <tr>
                     <th><label th:for="profileUrl" th:text="#{profileUrl}">aaa</label></th>
                     <td><input type="url" th:field="*{speakerForms[__${stat.index}__].profileUrl}"
-                               th:placeholder="${stat.index} eq 0 ? '(Required)'"
+                               placeholder="(Required)"
                                th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].profileUrl') ? 'error' : ''}"/></td>
                 </tr>
-                <tr th:each="seq, seqStat : ${#numbers.sequence(1,2)}">
-                    <th><label th:for="activities" th:text="#{activities} + ${seq}">aaa</label></th>
+                <tr th:each="seq, seqStat : ${#numbers.sequence(1,5)}">
+                    <th><label th:for="activities" th:text="#{activities} + ${seq}">コミュニティ活動、BlogのURL、Twitterアカウントなど1</label></th>
                     <td><select style="width: 15%" th:field="*{speakerForms[__${stat.index}__].activityList[__${seqStat.index}__].activityType}"
                                 th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].activityList[' + seqStat.index + '].activityType') ? 'error' : ''}">
                             <option value="" th:text="${seqStat.index} eq 0 ? '(Required)'"></option>
@@ -137,7 +137,7 @@
                                     th:text="${e.message(@messageSource, #locale)}"
                                     th:value="${e}"></option>
                         </select>
-                        <input style="width: 60%" type="url" th:placeholder="${seqStat.index} eq 0 ? '(Required)'" th:field="*{speakerForms[__${stat.index}__].activityList[__${seqStat.index}__].url}"
+                        <input style="width: 60%" type="url" placeholder="(Required)" th:field="*{speakerForms[__${stat.index}__].activityList[__${seqStat.index}__].url}"
                                 th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].activityList[' + seqStat.index + '].url') ? 'error' : ''}" />
                     </td>
                 </tr>
@@ -147,7 +147,7 @@
                 <tr>
                     <th style="width: 30%"><label th:for="email" th:text="#{email}">Email</label></th>
                     <td style="width: 70%"><input type="email" th:field="*{speakerForms[__${stat.index}__].email}"
-                            th:placeholder="${stat.index} eq 0 ? '(Required)'"
+                            placeholder="(Required)"
                             th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].email') ? 'error' : ''}"/></td>
                 </tr>
                 <tr>
