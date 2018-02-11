@@ -58,10 +58,14 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 				"講演者情報1\n" + //
 				"名前\tFoo Bar\n" + //
 				"GitHubアカウント\tfoo\n" + //
-				"所属\t\n" + //
-				"講演者紹介\t\n" + //
-				"コミュニティ活動、BlogのURL、Twitterアカウントなど\thttps://github.com/foo\n" + //
+				"所属\tJJUG\n" + //
+				"講演者紹介\t色々やっています。\n" + //
 				"プロフィール画像URL\thttps://avatars.githubusercontent.com/foo?size=120\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど1\tTwitter https://twitter.com/jjug\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど2\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど3\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど4\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど5\t\n" + //
 				"非公開情報1\n" + //
 				"Email\tfoo@example.com\n" + //
 				"交通費支給を希望\tunchecked\n" + //
@@ -117,9 +121,12 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 						"GitHubアカウント\tfoo\n" + //
 						"所属\tJJUG[変更]\n" + //
 						"講演者紹介\t色々やっています。[変更]\n" + //
-						"コミュニティ活動、BlogのURL、Twitterアカウントなど\t@JJUG[変更]\n" + //
-						"プロフィール画像URL\thttps://avatars.githubusercontent.com/foo?size=120\n"
-						+ //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど1\tTwitter https://twitter.com/jjug[変更]\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど2\t\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど3\t\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど4\t\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど5\t\n" + //
+						"プロフィール画像URL\thttps://avatars.githubusercontent.com/foo?size=120\n" + //
 						"非公開情報1\n" + //
 						"Email\tfoo@example.com\n" + //
 						"交通費支給を希望\tunchecked\n" + //
@@ -141,7 +148,8 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 		form.getInputByName("speakerForms[0].companyOrCommunity")
 				.setValueAttribute("JJUG[変更]");
 		form.getTextAreaByName("speakerForms[0].bio").setText("色々やっています。[変更]");
-		form.getTextAreaByName("speakerForms[0].activities").setText("@JJUG[変更]");
+		form.getSelectByName("speakerForms[0].activityList[0].activityType").setSelectedAttribute("TWITTER", true);
+		form.getInputByName("speakerForms[0].activityList[0].url").setValueAttribute("https://twitter.com/jjug[変更]");
 		HtmlPage submit = form.getInputsByValue("Submit CFP").get(0).click();
 		return submit;
 	}
@@ -158,7 +166,8 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 		form.getInputByName("speakerForms[0].companyOrCommunity")
 				.setValueAttribute("JJUG");
 		form.getTextAreaByName("speakerForms[0].bio").setText("色々やっています。");
-		form.getTextAreaByName("speakerForms[0].activities").setText("@JJUG");
+		form.getSelectByName("speakerForms[0].activityList[0].activityType").setSelectedAttribute("TWITTER", true);
+		form.getInputByName("speakerForms[0].activityList[0].url").setValueAttribute("https://twitter.com/jjug");
 		HtmlPage submit = form.getInputsByValue("Submit CFP").get(0).click();
 		return submit;
 	}
@@ -185,7 +194,11 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 				"GitHubアカウント\tfoo\n" + //
 				"所属\tJJUG\n" + //
 				"講演者紹介\t色々やっています。\n" + //
-				"コミュニティ活動、BlogのURL、Twitterアカウントなど\t@JJUG\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど1\tTwitter https://twitter.com/jjug\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど2\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど3\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど4\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど5\t\n" + //
 				"プロフィール画像URL\thttps://avatars.githubusercontent.com/foo?size=120\n" + //
 				"非公開情報1\n" + //
 				"Email\tfoo@example.com\n" + //
@@ -225,7 +238,7 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 				" JJUG\n" + //
 				"色々やっています。\n" + //
 				"\n" + //
-				"@JJUG");
+				"https://twitter.com/jjug");
 		return preview;
 	}
 
@@ -258,7 +271,7 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 				" JJUG[変更]\n" + //
 				"色々やっています。[変更]\n" + //
 				"\n" + //
-				"@JJUG[変更]");
+				"https://twitter.com/jjug[変更]");
 		return preview;
 	}
 
