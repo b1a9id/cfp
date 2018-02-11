@@ -141,13 +141,7 @@ public class SubmissionController {
 		BeanUtils.copyProperties(submission, submissionForm);
 		List<Speaker> speakers = submission.getSpeakers();
 		Collections.reverse(speakers);
-		Deque<SpeakerForm> speakerForms = new LinkedList<>();
-		for (Speaker speaker : speakers) {
-			SpeakerForm form = new SpeakerForm();
-			BeanUtils.copyProperties(speaker, form);
-			speakerForms.add(form);
-		}
-		submissionForm.setSpeakerForms(speakerForms);
+		submissionForm.setSpeakerForms(copyToSpeakerForms(speakers));
 
 		return "submission/submissionEditForm";
 	}
@@ -207,7 +201,7 @@ public class SubmissionController {
 		SpeakerForm speakerForm = submissionForm.getSpeakerForms().getFirst();
 		BeanUtils.copyProperties(speaker, speakerForm);
 
-		List<ActivityForm> activityForms =activities.stream()
+		List<ActivityForm> activityForms = activities.stream()
 				.map(activity -> {
 					ActivityForm activityForm = new ActivityForm();
 					BeanUtils.copyProperties(activity, activityForm);
@@ -215,6 +209,27 @@ public class SubmissionController {
 				}).collect(Collectors.toList());
 		speakerForm.setActivityList(activityForms);
 		submissionForm.setSpeakerForms(new LinkedList<>(singletonList(speakerForm)));
+	}
+
+	Deque<SpeakerForm> copyToSpeakerForms(List<Speaker> speakers) {
+		if (CollectionUtils.isEmpty(speakers)) {
+			return new LinkedList<>();
+		}
+		Deque<SpeakerForm> speakerForms = new LinkedList<>();
+		for (Speaker speaker : speakers) {
+			SpeakerForm speakerForm = new SpeakerForm();
+			BeanUtils.copyProperties(speaker, speakerForm);
+
+			List<ActivityForm> activityList = speaker.getActivityList().stream()
+					.map(activity -> {
+						ActivityForm activityForm = new ActivityForm();
+						BeanUtils.copyProperties(activity, activityForm);
+						return activityForm;
+					}).collect(Collectors.toList());
+			speakerForm.setActivityList(activityList);
+			speakerForms.add(speakerForm);
+		}
+		return speakerForms;
 	}
 
 	List<Speaker> copyToSpeakers(Deque<SpeakerForm> speakerForms) {
@@ -230,6 +245,7 @@ public class SubmissionController {
 
 							List<Activity> activityList = speakerForm.getActivityList().stream()
 									.filter(activityForm -> nonNull(activityForm.getUrl()) && hasLength(activityForm.getUrl()))
+									.distinct()
 									.map(activityForm -> {
 										Activity activity = new Activity();
 										BeanUtils.copyProperties(activityForm, activity);

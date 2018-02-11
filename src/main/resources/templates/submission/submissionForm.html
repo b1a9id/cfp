@@ -137,7 +137,7 @@
                                     th:text="${e.message(@messageSource, #locale)}"
                                     th:value="${e}"></option>
                         </select>
-                        <input style="width: 60%" type="url" placeholder="(Required)" th:field="*{speakerForms[__${stat.index}__].activityList[__${seqStat.index}__].url}"
+                        <input style="width: 60%" type="url" th:placeholder="${seqStat.index} eq 0 ? '(Required)'" th:field="*{speakerForms[__${stat.index}__].activityList[__${seqStat.index}__].url}"
                                 th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].activityList[' + seqStat.index + '].url') ? 'error' : ''}" />
                     </td>
                 </tr>
