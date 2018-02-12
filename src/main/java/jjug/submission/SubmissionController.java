@@ -43,7 +43,7 @@ public class SubmissionController {
 		binder.addValidators(submissionFormValidator);
 	}
 
-	@ModelAttribute
+	@ModelAttribute("submissionForm")
 	SubmissionForm submissionForm(@AuthenticationPrincipal CfpUser user) {
 		SubmissionForm submissionForm = new SubmissionForm();
 		if (user != null) {
@@ -175,7 +175,9 @@ public class SubmissionController {
 	@PostMapping(value = "submissions/{submissionId}/form", params = "add-speaker")
 	public String addSpeakerForEdit(SubmissionForm submissionForm,
 			@PathVariable UUID submissionId, Model model) {
-		submissionForm.getSpeakerForms().add(new SpeakerForm());
+		SpeakerForm speakerForm = new SpeakerForm();
+		speakerForm.setActivityList(new ArrayList<>(singletonList(new ActivityForm())));
+		submissionForm.getSpeakerForms().add(speakerForm);
 		model.addAttribute("submission",
 				submissionRepository.findOne(submissionId).get());
 		return "submission/submissionEditForm";
