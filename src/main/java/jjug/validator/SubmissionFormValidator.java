@@ -40,19 +40,20 @@ public class SubmissionFormValidator implements Validator {
 		String activityTypeMsg = "speakerForms[%s].activityList[%s].activityType";
 		String urlMsg = "speakerForms[%s].activityList[%s].url";
 
-		if (activityList.isEmpty()) {
+		List<ActivityForm> activityForms = activityList.stream()
+				.filter(activityForm -> nonNull(activityForm.getActivityType()) || hasLength(activityForm.getUrl()))
+				.collect(Collectors.toList());
+
+		if (activityForms.isEmpty()) {
 			errors.rejectValue(format(activityTypeMsg, index, 0), "NotEmpty", new Object[]{format(activityTypeMsg, index, 0)}, null);
 			errors.rejectValue(format(urlMsg, index, 0), "NotEmpty", new Object[]{format(urlMsg, index, 0)}, null);
 		}
 
-		List<ActivityForm> activityForms = new ArrayList<>(activityList).stream()
-				.filter(activityForm -> Objects.nonNull(activityForm.getActivityType()) || StringUtils.hasLength(activityForm.getUrl()))
-				.collect(Collectors.toList());
 		for (int i = 0; i < activityForms.size(); i++) {
-			if (Objects.isNull(activityForms.get(i).getActivityType())) {
+			if (isNull(activityForms.get(i).getActivityType())) {
 				errors.rejectValue(format(activityTypeMsg, index, i), "NotEmpty", new Object[]{format(activityTypeMsg, index, i)}, null);
 			}
-			if (!StringUtils.hasLength(activityForms.get(i).getUrl())) {
+			if (!hasLength(activityForms.get(i).getUrl())) {
 				errors.rejectValue(format(urlMsg, index, i), "NotEmpty", new Object[]{format(urlMsg, index, i)}, null);
 			}
 		}
