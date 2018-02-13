@@ -40,8 +40,9 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 
 		HtmlPage submissions = this.webClient.getPage("http://localhost:" + port
 				+ "/conferences/00000000-0000-0000-0000-000021000101/submissions/form");
-
-		assertThat(submissions.asText()).startsWith("Test Conf 1\n" + //
+		assertShowSubmissions(submissions);
+		HtmlPage addSpeakerSubmissions = addSpeaker(submissions);
+		assertThat(addSpeakerSubmissions.asText()).startsWith("Test Conf 1\n" + //
 				"\n" + //
 				"Test Conf 1 (2100/01/01)\n" + //
 				"Japanese English\n" + //
@@ -60,13 +61,35 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 				"GitHubアカウント\tfoo\n" + //
 				"所属\t\n" + //
 				"講演者紹介\t\n" + //
-				"コミュニティ活動、BlogのURL、Twitterアカウントなど\thttps://github.com/foo\n" + //
 				"プロフィール画像URL\thttps://avatars.githubusercontent.com/foo?size=120\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど1\tGithub https://github.com/foo\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど2\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど3\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど4\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど5\t\n" + //
 				"非公開情報1\n" + //
 				"Email\tfoo@example.com\n" + //
 				"交通費支給を希望\tunchecked\n" + //
 				"国・市町村（交通費支給を要する場合)\t\n" + //
+				"事務局へのコメント、セッションの補足情報など\t\n" + //
+				"講演者情報2\n" + //
+				"名前\t\n" + //
+				"GitHubアカウント\t\n" + //
+				"所属\t\n" + //
+				"講演者紹介\t\n" + //
+				"プロフィール画像URL\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど1\t(Required)\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど2\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど3\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど4\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど5\t\n" + //
+				"非公開情報2\n" + //
+				"Email\t\n" + //
+				"交通費支給を希望\tunchecked\n" + //
+				"国・市町村（交通費支給を要する場合)\t\n" + //
 				"事務局へのコメント、セッションの補足情報など");
+		HtmlPage removedSpeakerSubmissions = removeSpeaker(addSpeakerSubmissions);
+		assertShowSubmissions(removedSpeakerSubmissions);
 	}
 
 	@Test
@@ -98,33 +121,11 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 		this.checkCreatedEmail();
 		HtmlPage editForm = this.showEditForm(submit);
 		HtmlPage editedForm = this.editTheSubmission(editForm);
-		assertThat(editedForm.asText())
-				.startsWith("Test Conf 1\n" + "\n" + "Test Conf 1 (2100/01/01)\n" + //
-						"Japanese English\n" + //
-						"\n" + //
-						"Call for Papers\n" + //
-						"Status: 応募済\n" + //
-						"講演情報\n" + //
-						"タイトル\tテストセッション[変更]\n" + //
-						"概要\tテスト用のセッションです。[変更]\n" + //
-						"想定している聴講者層\tテストユーザーを対象としています。[変更]\n" + //
-						"カテゴリ\tJVM\n" + //
-						"難易度\t中級者向け\n" + //
-						"種類\t初心者枠 (45分)\n" + //
-						"言語\t英語\n" + //
-						"講演者情報1\n" + //
-						"名前\tFoo Bar\n" + //
-						"GitHubアカウント\tfoo\n" + //
-						"所属\tJJUG[変更]\n" + //
-						"講演者紹介\t色々やっています。[変更]\n" + //
-						"コミュニティ活動、BlogのURL、Twitterアカウントなど\t@JJUG[変更]\n" + //
-						"プロフィール画像URL\thttps://avatars.githubusercontent.com/foo?size=120\n"
-						+ //
-						"非公開情報1\n" + //
-						"Email\tfoo@example.com\n" + //
-						"交通費支給を希望\tunchecked\n" + //
-						"国・市町村（交通費支給を要する場合)\t\n" + //
-						"事務局へのコメント、セッションの補足情報など");
+		assertEditSubmission(editedForm);
+		HtmlPage addSpeakerEditForm = addSpeaker(editedForm);
+		assertAddSpeakerEditForm(addSpeakerEditForm);
+		HtmlPage removedSpeakerEditForm = removeSpeaker(addSpeakerEditForm);
+		assertEditSubmission(removedSpeakerEditForm);
 		this.checkUpdatedEmailChanged();
 		this.showUpdatedPreview(editedForm);
 	}
@@ -141,7 +142,8 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 		form.getInputByName("speakerForms[0].companyOrCommunity")
 				.setValueAttribute("JJUG[変更]");
 		form.getTextAreaByName("speakerForms[0].bio").setText("色々やっています。[変更]");
-		form.getTextAreaByName("speakerForms[0].activities").setText("@JJUG[変更]");
+		form.getSelectByName("speakerForms[0].activityList[0].activityType").setSelectedAttribute("TWITTER", true);
+		form.getInputByName("speakerForms[0].activityList[0].url").setValueAttribute("https://twitter.com/jjug[変更]");
 		HtmlPage submit = form.getInputsByValue("Submit CFP").get(0).click();
 		return submit;
 	}
@@ -158,9 +160,53 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 		form.getInputByName("speakerForms[0].companyOrCommunity")
 				.setValueAttribute("JJUG");
 		form.getTextAreaByName("speakerForms[0].bio").setText("色々やっています。");
-		form.getTextAreaByName("speakerForms[0].activities").setText("@JJUG");
+		form.getSelectByName("speakerForms[0].activityList[0].activityType").setSelectedAttribute("TWITTER", true);
+		form.getInputByName("speakerForms[0].activityList[0].url").setValueAttribute("https://twitter.com/jjug");
 		HtmlPage submit = form.getInputsByValue("Submit CFP").get(0).click();
 		return submit;
+	}
+
+	private HtmlPage addSpeaker(HtmlPage submission) throws Exception {
+		HtmlForm form = (HtmlForm) submission.getElementsByTagName("form").get(0);
+		return form.getInputsByName("add-speaker").get(0).click();
+	}
+
+	private HtmlPage removeSpeaker(HtmlPage submission) throws Exception {
+		HtmlForm form = (HtmlForm) submission.getElementsByTagName("form").get(0);
+		return form.getInputsByName("remove-speaker").get(0).click();
+	}
+
+	private void assertShowSubmissions(HtmlPage submissions) {
+		assertThat(submissions.asText()).startsWith("Test Conf 1\n" + //
+				"\n" + //
+				"Test Conf 1 (2100/01/01)\n" + //
+				"Japanese English\n" + //
+				"\n" + //
+				"Call for Papers\n" + //
+				"講演情報\n" + //
+				"タイトル\t\n" + //
+				"概要\t\n" + //
+				"想定している聴講者層\t\n" + //
+				"カテゴリ\t(Required)\n" + //
+				"難易度\t(Required)\n" + //
+				"種類\t(Required)\n" + //
+				"言語\t(Required)\n" + //
+				"講演者情報1\n" + //
+				"名前\tFoo Bar\n" + //
+				"GitHubアカウント\tfoo\n" + //
+				"所属\t\n" + //
+				"講演者紹介\t\n" + //
+				"プロフィール画像URL\thttps://avatars.githubusercontent.com/foo?size=120\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど1\tGithub https://github.com/foo\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど2\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど3\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど4\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど5\t\n" + //
+				"非公開情報1\n" + //
+				"Email\tfoo@example.com\n" + //
+				"交通費支給を希望\tunchecked\n" + //
+				"国・市町村（交通費支給を要する場合)\t\n" + //
+				"事務局へのコメント、セッションの補足情報など");
 	}
 
 	private HtmlPage showEditForm(HtmlPage submit) throws Exception {
@@ -185,7 +231,11 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 				"GitHubアカウント\tfoo\n" + //
 				"所属\tJJUG\n" + //
 				"講演者紹介\t色々やっています。\n" + //
-				"コミュニティ活動、BlogのURL、Twitterアカウントなど\t@JJUG\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど1\tTwitter https://twitter.com/jjug\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど2\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど3\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど4\t\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど5\t\n" + //
 				"プロフィール画像URL\thttps://avatars.githubusercontent.com/foo?size=120\n" + //
 				"非公開情報1\n" + //
 				"Email\tfoo@example.com\n" + //
@@ -194,6 +244,89 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 				"事務局へのコメント、セッションの補足情報など\t\n" + //
 				" スピーカーを増やす");
 		return submission;
+	}
+
+	private void assertEditSubmission(HtmlPage submissions) {
+		assertThat(submissions.asText())
+				.startsWith("Test Conf 1\n" + "\n" + "Test Conf 1 (2100/01/01)\n" + //
+						"Japanese English\n" + //
+						"\n" + //
+						"Call for Papers\n" + //
+						"Status: 応募済\n" + //
+						"講演情報\n" + //
+						"タイトル\tテストセッション[変更]\n" + //
+						"概要\tテスト用のセッションです。[変更]\n" + //
+						"想定している聴講者層\tテストユーザーを対象としています。[変更]\n" + //
+						"カテゴリ\tJVM\n" + //
+						"難易度\t中級者向け\n" + //
+						"種類\t初心者枠 (45分)\n" + //
+						"言語\t英語\n" + //
+						"講演者情報1\n" + //
+						"名前\tFoo Bar\n" + //
+						"GitHubアカウント\tfoo\n" + //
+						"所属\tJJUG[変更]\n" + //
+						"講演者紹介\t色々やっています。[変更]\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど1\tTwitter https://twitter.com/jjug[変更]\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど2\t\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど3\t\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど4\t\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど5\t\n" + //
+						"プロフィール画像URL\thttps://avatars.githubusercontent.com/foo?size=120\n" + //
+						"非公開情報1\n" + //
+						"Email\tfoo@example.com\n" + //
+						"交通費支給を希望\tunchecked\n" + //
+						"国・市町村（交通費支給を要する場合)\t\n" + //
+						"事務局へのコメント、セッションの補足情報など");
+	}
+
+	private void assertAddSpeakerEditForm(HtmlPage editedForm) {
+		assertThat(editedForm.asText())
+				.startsWith("Test Conf 1\n" + "\n" +
+						"Test Conf 1 (2100/01/01)\n" + //
+						"Japanese English\n" + //
+						"\n" + //
+						"Call for Papers\n" + //
+						"Status: 応募済\n" + //
+						"講演情報\n" + //
+						"タイトル\tテストセッション[変更]\n" + //
+						"概要\tテスト用のセッションです。[変更]\n" + //
+						"想定している聴講者層\tテストユーザーを対象としています。[変更]\n" + //
+						"カテゴリ\tJVM\n" + //
+						"難易度\t中級者向け\n" + //
+						"種類\t初心者枠 (45分)\n" + //
+						"言語\t英語\n" + //
+						"講演者情報1\n" + //
+						"名前\tFoo Bar\n" + //
+						"GitHubアカウント\tfoo\n" + //
+						"所属\tJJUG[変更]\n" + //
+						"講演者紹介\t色々やっています。[変更]\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど1\tTwitter https://twitter.com/jjug[変更]\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど2\t\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど3\t\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど4\t\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど5\t\n" + //
+						"プロフィール画像URL\thttps://avatars.githubusercontent.com/foo?size=120\n" + //
+						"非公開情報1\n" + //
+						"Email\tfoo@example.com\n" + //
+						"交通費支給を希望\tunchecked\n" + //
+						"国・市町村（交通費支給を要する場合)\t\n" + //
+						"事務局へのコメント、セッションの補足情報など\t\n" + //
+						"講演者情報2\n" + //
+						"名前\t\n" + //
+						"GitHubアカウント\t\n" + //
+						"所属\t\n" + //
+						"講演者紹介\t\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど1\t(Required)\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど2\t\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど3\t\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど4\t\n" + //
+						"コミュニティ活動、BlogのURL、Twitterアカウントなど5\t\n" + //
+						"プロフィール画像URL\t\n" + //
+						"非公開情報2\n" + //
+						"Email\t\n" + //
+						"交通費支給を希望\tunchecked\n" + //
+						"国・市町村（交通費支給を要する場合)\t\n" + //
+						"事務局へのコメント、セッションの補足情報など");
 	}
 
 	private HtmlPage showCreatedPreview(HtmlPage submission) throws Exception {
@@ -225,7 +358,7 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 				" JJUG\n" + //
 				"色々やっています。\n" + //
 				"\n" + //
-				"@JJUG");
+				"https://twitter.com/jjug");
 		return preview;
 	}
 
@@ -258,7 +391,7 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 				" JJUG[変更]\n" + //
 				"色々やっています。[変更]\n" + //
 				"\n" + //
-				"@JJUG[変更]");
+				"https://twitter.com/jjug[変更]");
 		return preview;
 	}
 
