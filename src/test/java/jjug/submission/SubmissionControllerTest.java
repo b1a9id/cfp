@@ -58,10 +58,10 @@ public class SubmissionControllerTest extends MockGithubServerTest {
 				"講演者情報1\n" + //
 				"名前\tFoo Bar\n" + //
 				"GitHubアカウント\tfoo\n" + //
-				"所属\tJJUG\n" + //
-				"講演者紹介\t色々やっています。\n" + //
+				"所属\t\n" + //
+				"講演者紹介\t\n" + //
 				"プロフィール画像URL\thttps://avatars.githubusercontent.com/foo?size=120\n" + //
-				"コミュニティ活動、BlogのURL、Twitterアカウントなど1\tTwitter https://twitter.com/jjug\n" + //
+				"コミュニティ活動、BlogのURL、Twitterアカウントなど1\tGithub https://github.com/foo\n" + //
 				"コミュニティ活動、BlogのURL、Twitterアカウントなど2\t\n" + //
 				"コミュニティ活動、BlogのURL、Twitterアカウントなど3\t\n" + //
 				"コミュニティ活動、BlogのURL、Twitterアカウントなど4\t\n" + //
