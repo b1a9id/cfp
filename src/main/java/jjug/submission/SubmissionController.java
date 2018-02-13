@@ -137,11 +137,8 @@ public class SubmissionController {
 		if (updated) {
 			return "submission/submissionEditForm";
 		}
-
 		BeanUtils.copyProperties(submission, submissionForm);
-		List<Speaker> speakers = submission.getSpeakers();
-		submissionForm.setSpeakerForms(copyToSpeakerForms(speakers));
-
+		submissionForm.setSpeakerForms(copyToSpeakerForms(submission.getSpeakers()));
 		return "submission/submissionEditForm";
 	}
 
