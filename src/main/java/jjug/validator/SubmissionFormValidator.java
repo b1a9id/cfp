@@ -1,20 +1,15 @@
 package jjug.validator;
 
-import jjug.submission.ActivityForm;
-import jjug.submission.SpeakerForm;
-import jjug.submission.SubmissionForm;
+import jjug.submission.*;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
+import org.springframework.validation.*;
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.lang.String.format;
+import static java.lang.String.*;
+import static java.util.Objects.*;
+import static org.springframework.util.StringUtils.*;
 
 @Component
 public class SubmissionFormValidator implements Validator {
