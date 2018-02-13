@@ -117,8 +117,8 @@
                             th:placeholder="${stat.index} eq 0 ? 'Markdown is available. (Required)'"
                             th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].bio') ? 'error' : ''}"></textarea></td>
                 </tr>
-                <tr th:each="acitivity, seqStat : ${speakerForm.activityList}">
-                    <th><label th:for="activities" th:text="#{activities} + ${seqStat.count}">コミュニティ活動、BlogのURL、Twitterアカウントなど1</label></th>
+                <tr th:each="seq, seqStat : ${#numbers.sequence(1,5)}">
+                    <th><label th:for="activities" th:text="#{activities} + ${seq}">コミュニティ活動、BlogのURL、Twitterアカウントなど1</label></th>
                     <td><select style="width: 15%" th:field="*{speakerForms[__${stat.index}__].activityList[__${seqStat.index}__].activityType}"
                                 th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].activityList[' + seqStat.index + '].activityType') ? 'error' : ''}">
                         <option value="" th:text="${seqStat.index} eq 0 ? '(Required)'"></option>
@@ -127,20 +127,7 @@
                                 th:value="${e}"></option>
                     </select>
                         <input style="width: 60%" type="url" th:placeholder="${seqStat.index} eq 0 ? '(Required)'" th:field="*{speakerForms[__${stat.index}__].activityList[__${seqStat.index}__].url}"
-                               th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].activityList[' + seqStat.index + '].url') ? 'error' : ''}" th:value="${acitivity.url}" />
-                    </td>
-                </tr>
-                <tr th:each="seq, seqStat : ${#numbers.sequence(#lists.size(speakerForm.activityList) + 1,5)}">
-                    <th><label th:for="activities" th:text="#{activities} + ${seq}">コミュニティ活動、BlogのURL、Twitterアカウントなど1</label></th>
-                    <td><select style="width: 15%" th:field="*{speakerForms[__${stat.index}__].activityList[__${seq}__].activityType}"
-                                th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].activityList[' + seq + '].activityType') ? 'error' : ''}">
-                        <option value=""></option>
-                        <option th:each="e : ${T(jjug.speaker.enums.ActivityType).values()}"
-                                th:text="${e.message(@messageSource, #locale)}"
-                                th:value="${e}"></option>
-                    </select>
-                        <input style="width: 60%" type="url" th:field="*{speakerForms[__${stat.index}__].activityList[__${seq}__].url}"
-                               th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].activityList[' + seq + '].url') ? 'error' : ''}" />
+                               th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].activityList[' + seqStat.index + '].url') ? 'error' : ''}" />
                     </td>
                 </tr>
                 <tr>

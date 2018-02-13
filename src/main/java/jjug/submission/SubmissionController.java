@@ -43,7 +43,7 @@ public class SubmissionController {
 		binder.addValidators(submissionFormValidator);
 	}
 
-	@ModelAttribute("submissionForm")
+	@ModelAttribute
 	SubmissionForm submissionForm(@AuthenticationPrincipal CfpUser user) {
 		SubmissionForm submissionForm = new SubmissionForm();
 		if (user != null) {
@@ -140,7 +140,6 @@ public class SubmissionController {
 
 		BeanUtils.copyProperties(submission, submissionForm);
 		List<Speaker> speakers = submission.getSpeakers();
-		Collections.reverse(speakers);
 		submissionForm.setSpeakerForms(copyToSpeakerForms(speakers));
 
 		return "submission/submissionEditForm";
@@ -175,9 +174,7 @@ public class SubmissionController {
 	@PostMapping(value = "submissions/{submissionId}/form", params = "add-speaker")
 	public String addSpeakerForEdit(SubmissionForm submissionForm,
 			@PathVariable UUID submissionId, Model model) {
-		SpeakerForm speakerForm = new SpeakerForm();
-		speakerForm.setActivityList(new ArrayList<>(singletonList(new ActivityForm())));
-		submissionForm.getSpeakerForms().add(speakerForm);
+		submissionForm.getSpeakerForms().add(new SpeakerForm());
 		model.addAttribute("submission",
 				submissionRepository.findOne(submissionId).get());
 		return "submission/submissionEditForm";
@@ -199,11 +196,10 @@ public class SubmissionController {
 	}
 
 	void copyToSpeakerForm(Speaker speaker, SubmissionForm submissionForm) {
-		List<Activity> activities = speaker.getActivityList();
 		SpeakerForm speakerForm = submissionForm.getSpeakerForms().getFirst();
 		BeanUtils.copyProperties(speaker, speakerForm);
 
-		List<ActivityForm> activityForms = activities.stream()
+		List<ActivityForm> activityForms = speaker.getActivityList().stream()
 				.map(activity -> {
 					ActivityForm activityForm = new ActivityForm();
 					BeanUtils.copyProperties(activity, activityForm);
