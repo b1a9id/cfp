@@ -128,7 +128,7 @@
                                placeholder="(Required)"
                                th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].profileUrl') ? 'error' : ''}"/></td>
                 </tr>
-                <tr th:each="seq, seqStat : ${#numbers.sequence(1,5)}">
+                <tr th:each="seq, seqStat : ${#numbers.sequence(1,@environment.getProperty('speaker.max-activities'))}">
                     <th><label th:for="activities" th:text="#{activities} + ${seq}">コミュニティ活動、BlogのURL、Twitterアカウントなど1</label></th>
                     <td><select style="width: 15%" th:field="*{speakerForms[__${stat.index}__].activityList[__${seqStat.index}__].activityType}"
                                 th:classappend="${#fields.hasErrors('speakerForms[' + stat.index + '].activityList[' + seqStat.index + '].activityType') ? 'error' : ''}">
